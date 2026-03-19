@@ -5,17 +5,15 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma:PrismaService){}
+  constructor(private readonly prisma: PrismaService) { }
   // create(createUserDto: CreateUserDto) {
   //   console.log(123);
-    
-    
+
+
   //   return 'This action adds a new user';
   // }
 
   create(createUserDto: CreateUserDto) {
-      console.log(113);
-      
     return this.prisma.user.create({
       data: createUserDto,
     });
