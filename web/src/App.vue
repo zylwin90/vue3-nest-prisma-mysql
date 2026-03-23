@@ -115,9 +115,9 @@
                 </el-form-item>
                 <el-form-item label="分类" prop="category">
                     <el-select v-model="form.category" placeholder="请选择分类" style="width: 100%">
-                        <el-option label="工作" value="工作" />
-                        <el-option label="学习" value="学习" />
-                        <el-option label="生活" value="生活" />
+                        <el-option label="工作" :value="1" />
+                        <el-option label="学习" :value="2" />
+                        <el-option label="生活" :value="3" />
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -199,18 +199,18 @@ const resetForm = () => {
 
 // 获取列表数据
 const getList = async () => {
-    // TODO: 调用你的 API
-    console.log('获取列表数据');
-    const res = await apiGet('/api/todu');
-    console.log(res);
+    const res = await apiGet('/api/todo');
+    tableData.value = res;
+    
 };
 
 // 添加任务
 const addTask = async data => {
     // TODO: 调用你的 API
-    delete data.id; 
+    delete data.id;
     console.log('添加任务:', data);
     const res = await apiPost('/api/todo', data);
+    ElMessage.success('新增成功');
     console.log(res);
 };
 
@@ -385,37 +385,8 @@ const handleConfirm = async () => {
     });
 };
 
-// 初始化默认数据
-const initData = () => {
-    tableData.value = [
-        {
-            id: 1,
-            title: '完成项目文档',
-            category: '工作',
-            completed: true,
-            createTime: '2026-03-16 09:00:00',
-        },
-        {
-            id: 2,
-            title: '学习 Vue3 新特性',
-            category: '学习',
-            completed: false,
-            createTime: '2026-03-16 10:30:00',
-        },
-        {
-            id: 3,
-            title: '健身锻炼',
-            category: '生活',
-            completed: false,
-            createTime: '2026-03-16 14:00:00',
-        },
-    ];
-};
-
 onMounted(() => {
-    initData();
-    // 实际使用时取消下面的注释来加载数据
-    // getList()
+    getList();
 });
 </script>
 

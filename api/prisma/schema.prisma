@@ -13,9 +13,19 @@ datasource db {
   provider = "mysql"
 }
 
+// 用户
 model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
   name       String?
+  createTime DateTime @default(dbgenerated("(now())"))
+}
+
+// todo
+model Todo {
+  id Int  @id @default(autoincrement())
+  title String
+  category Int @default(1) // 1 工作 2 学习 3 生活
+  completed Boolean @default(false)
   createTime DateTime @default(dbgenerated("(now())"))
 }
