@@ -1,34 +1,48 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { Roles } from '@/decorators/roles.decorator';
+import { JwtAuthGuard } from '@/guards/passport-jwt-guard';
+import { Public } from '@/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) { }
+  constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  /**
+   * 登录
+   * @param userDto
+   * @returns
+   */
+  // @Roles(['admin'])
+  @Public()
+  @Post('login')
+  login(@Body() userDto: LoginUserDto) {
+    return this.userService.login(userDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
+  /**
+   * 注册
+   * @param userDto
+   * @returns
+   */
+  // @Roles(['admin'])
+  @Public()
+  @Post('register')
+  register(@Body() userDto: RegisterUserDto) {
+    return this.userService.register(userDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  /**
+   * 用户详情
+   * @param userDto
+   * @returns
+   */
+  // @Roles(['admin'])
+  @UseGuards(JwtAuthGuard)
+  @Get('getUserInfo')
+  getUserInfo() {
+    return this.userService.getUserInfo({ name: 'zyl' });
   }
 }

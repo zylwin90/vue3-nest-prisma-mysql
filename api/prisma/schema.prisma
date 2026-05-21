@@ -17,15 +17,18 @@ datasource db {
 model User {
   id         Int      @id @default(autoincrement())
   email      String   @unique
-  name       String?
-  createTime DateTime @default(dbgenerated("(now())"))
+  name       String   @unique
+  password   String
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt
 }
 
 // todo
 model Todo {
-  id Int  @id @default(autoincrement())
-  title String
-  category Int @default(1) // 1 工作 2 学习 3 生活
-  completed Boolean @default(false)
-  createTime DateTime @default(dbgenerated("(now())"))
+  id         Int      @id @default(autoincrement())
+  name       String
+  status     Int      @default(1) // 0 全部 1 完成 2 未完成
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt
+  remark     String?
 }
