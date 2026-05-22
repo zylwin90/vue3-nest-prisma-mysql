@@ -2,13 +2,7 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { errorTips, getStore } from './utils';
-const httpStatus: any = {
-    400: '请求错误',
-    401: '未鉴权',
-    404: '请求地址不存在',
-    403: '无权限',
-    500: '服务器异常',
-};
+import { httpStatusFun } from './httpStatusFun';
 
 class HttpClient {
     private instance: AxiosInstance;
@@ -26,8 +20,7 @@ class HttpClient {
         this.instance.interceptors.request.use(
             config => {
                 const token = getStore('token');
-                console.log(token);
-                
+
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`;
                 }
@@ -49,7 +42,7 @@ class HttpClient {
                 return relsut;
             },
             error => {
-                errorTips(httpStatus[error.status] || '服务器异常');
+                httpStatusFun(error.status);
                 return Promise.reject(error);
             }
         );

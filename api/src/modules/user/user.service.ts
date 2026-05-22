@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 import { err, success } from '@/utils';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@/decorators/use.decorator';
+import { User } from '@/common/decorators/use.decorator';
 @Injectable()
 export class UserService {
   constructor(

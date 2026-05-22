@@ -13,17 +13,36 @@
 
                 <el-button type="primary" style="margin-left: 20px" @click="getList">查询</el-button>
                 <el-button type="warning" style="margin-left: 20px" @click="addHandle">新增</el-button>
+                <el-button type="danger" style="margin-left: 20px" @click="goOut">退出登录</el-button>
             </el-form>
 
             <el-table class="table" :data="list" border style="width: 100%">
-                <el-table-column prop="ID" label="ID" width="180" />
-                <el-table-column prop="todu名称" label="todu名称" min-width="180" />
-                <el-table-column prop="创建时间" label="创建时间" />
-                <el-table-column prop="更新时间" label="更新时间" />
-                <el-table-column prop="状态" label="状态" />
-                <el-table-column prop="操作" label="操作">
+                <el-table-column label="序号" width="70" fixed align="center">
+                    <template #="scope">
+                        {{ (currentPage - 1) * pageSize + (scope.$index + 1) }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="name" label="todu名称" min-width="130" show-overflow-tooltip />
+                <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip />
+                <el-table-column prop="createTime" label="创建时间">
                     <template #="{ row }">
-                        <el-button link type="primary" @click="detailHande(row)">详情</el-button>
+                        <span>{{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="updateTime" label="更新时间">
+                    <template #="{ row }">
+                        <span>{{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="状态" label="状态" fixed="right">
+                    <template #="{ row }">
+                        <span :style="{ color: row.status == 1 ? 'red' : 'green' }">
+                            {{ row.status == 1 ? '未完成' : '完成' }}
+                        </span>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="操作" label="操作" fixed="right">
+                    <template #="{ row }">
                         <el-button link type="warning" @click="editHande(row)">编辑</el-button>
                         <el-button link type="danger" @click="delHande(row)">删除</el-button>
                     </template>
@@ -45,9 +64,9 @@
     </el-card>
 
     <el-dialog v-model="dialogAdd" title="新增" width="500">
-        <el-form :model="form" :rules="rules" ref="formRef" label-width="auto">
+        <el-form :model="addFrom" :rules="rules" ref="formRef" label-width="auto">
             <el-form-item label="tuto名称" prop="name">
-                <el-input v-model="form.name" placeholder="请输入" />
+                <el-input v-model="addFrom.name" placeholder="请输入" />
             </el-form-item>
         </el-form>
 
@@ -60,14 +79,17 @@
     </el-dialog>
 
     <el-dialog v-model="dialogEdit" title="编辑" width="500">
-        <el-form :model="form" :rules="rules" ref="formRef" label-width="auto">
+        <el-form :model="editForm" :rules="rules" ref="formRef" label-width="auto">
             <el-form-item label="tuto名称" prop="name">
-                <el-input v-model="form.name" placeholder="请输入" />
+                <el-input v-model="editForm.name" placeholder="请输入" />
             </el-form-item>
             <el-form-item label="状态" prop="status">
-                <el-select v-model="form.status" placeholder="请选择状态">
-                    <el-option :label="p.label" :value="p.value" v-for="(p, i) in statusList" />
+                <el-select v-model="editForm.status" placeholder="请选择状态">
+                    <el-option :label="p.label" :value="p.value" v-for="(p, i) in editStatusList" />
                 </el-select>
+            </el-form-item>
+            <el-form-item label="备注" prop="remark">
+                <el-input v-model="editForm.remark" placeholder="请输入" type="textarea" :rows="5" />
             </el-form-item>
         </el-form>
 
@@ -81,18 +103,28 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import api from '@/apis/todo';
-import baseApi from '@/apis/login';
 import { successTips } from '@/utils/utils';
-
 import { useRouter } from 'vue-router';
+import dayjs from 'dayjs';
 import { ElMessageBox, type FormInstance, type FormRules } from 'element-plus';
 const router = useRouter();
 const formRef = ref<FormInstance>();
 const form = reactive({
     name: '',
     status: 0,
+});
+
+const addFrom = reactive({
+    name: '',
+});
+
+const editForm = reactive({
+    id: '',
+    name: '',
+    status: 1,
+    remark: '',
 });
 
 const statusList = [
@@ -102,11 +134,22 @@ const statusList = [
     },
     {
         value: 1,
-        label: '完成',
+        label: '未完成',
     },
     {
         value: 2,
+        label: '完成',
+    },
+];
+
+const editStatusList = [
+    {
+        value: 1,
         label: '未完成',
+    },
+    {
+        value: 2,
+        label: '完成',
     },
 ];
 
@@ -116,45 +159,55 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 
 const getList = () => {
-    // api.getList(form).then(res => {
-    //     console.log(res);
-    // });
-
-    baseApi.getUserInfo({ name: 'zyl' }).then(res => {
-        console.log(res);
+    const json = {
+        name: form.name,
+        status: form.status,
+        currentPage: currentPage.value,
+        pageSize: pageSize.value,
+    };
+    api.getList(json).then(res => {
+        if (!res || res.code != 1) return;
+        const { list: l, total: t } = res.data;
+        list.value = l;
+        total.value = t;
     });
 };
 
 const dialogAdd = ref(false);
 const addHandle = () => {
+    addFrom.name = '';
     dialogAdd.value = true;
 };
 const add = async () => {
     try {
         await formRef.value?.validate();
-        api.add({ name: form.name }).then(res => {
+        api.add({ name: addFrom.name }).then(res => {
             if (!res || res.code != 1) return;
+            dialogAdd.value = false;
             successTips('新增成功');
+
             getList();
         });
     } catch (error) {}
 };
-const detailHande = (row: any) => {
-    router.push({
-        path: '/detail',
-        query: { id: row.id },
-    });
-};
 
 const dialogEdit = ref(false);
 const editHande = (row: any) => {
-    dialogEdit.value = true;
+    api.detail(row.id).then(res => {
+        if (!res || res.code != 1) return;
+        editForm.id = res.data.id;
+        editForm.name = res.data.name;
+        editForm.status = res.data.status;
+        editForm.remark = res.data.remark;
+        dialogEdit.value = true;
+    });
 };
 const edit = async () => {
     try {
         await formRef.value?.validate();
-        api.put(form).then(res => {
+        api.put(editForm).then(res => {
             if (!res || res.code != 1) return;
+            dialogEdit.value = false;
             successTips('修改成功');
             getList();
         });
@@ -181,6 +234,16 @@ const handleCurrentChange = (val: number) => {
     currentPage.value = val;
     getList();
 };
+
+import { useUserStore } from '@/stores/user';
+const userStore = useUserStore();
+const goOut = () => {
+    userStore.resets();
+    router.push('/');
+};
+onMounted(() => {
+    getList();
+});
 
 const rules = reactive({
     name: [{ required: true, message: '请输入todu名称', trigger: 'blur' }],

@@ -2,7 +2,7 @@
     <div class="box">
         <el-card>
             <p style="text-align: center; color: #000; font-weight: 700; padding: 10px 0">注册</p>
-            <el-form :model="form" :rules="rules" ref="formRef" label-width="auto">
+            <el-form :model="form" :rules="rules" ref="formRef" label-width="auto" @submit.prevent="register">
                 <el-form-item label="账号" prop="name">
                     <el-input v-model="form.name" placeholder="请输入" />
                 </el-form-item>
@@ -14,7 +14,7 @@
                 </el-form-item>
 
                 <el-form-item label=" ">
-                    <el-button type="primary" @click="login" :loading="loading">注册</el-button>
+                    <el-button type="primary" native-type="submit" :loading="loading">注册</el-button>
                 </el-form-item>
 
                 <div style="text-align: center">
@@ -43,7 +43,7 @@ const form = reactive({
 });
 const loading = ref(false);
 
-const login = async () => {
+const register = async () => {
     try {
         await formRef.value?.validate();
         loading.value = true;

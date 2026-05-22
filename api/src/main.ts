@@ -1,18 +1,23 @@
 import 'dotenv/config';
 import { HttpAdapterHost, NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@/pipes/validation.pipe';
-import { AllExceptionsFilter } from '@/filters/all-exception.filter';
-import { HttpExceptionsFilter } from '@/filters/http-exception.filter';
-import { RolesGuard } from './guards/auth.guard';
+// import { ValidationPipe } from '@/pipes/validation.pipe';
+import { AllExceptionsFilter } from '@/common/filters/all-exception.filter';
+import { HttpExceptionsFilter } from '@/common/filters/http-exception.filter';
+import { RolesGuard } from '@/common/guards/auth.guard';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // 全局（验证参数）管道
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   // 错误异常捕获 和 过滤处理
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
   // app.useGlobalFilters(new HttpExceptionsFilter());
 
   // 全局守卫 需手动传入 reflector （这种不推荐）

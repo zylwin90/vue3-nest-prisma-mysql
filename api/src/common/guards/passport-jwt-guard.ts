@@ -1,4 +1,4 @@
-﻿import { IS_PUBLIC_KEY } from '@/decorators/public.decorator';
+﻿import { IS_PUBLIC_KEY } from '@/common/decorators/public.decorator';
 import {
   ExecutionContext,
   Injectable,
@@ -30,9 +30,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   handleRequest(err, user, info) {
-    console.log(err, 'err');
-    console.log(user, 'user');
-    console.log(info, 'info');
+    // console.log(err, 'err');
+    // console.log(user, 'user');
+    // console.log(info, 'info');
 
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {

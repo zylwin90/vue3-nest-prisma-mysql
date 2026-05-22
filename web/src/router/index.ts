@@ -34,18 +34,14 @@ const whiteList = ['/', '/login', '/register'];
 router.beforeEach((to: any, form: any) => {
     const userStore = useUserStore();
 
-    // 有 token
     if (userStore.token) {
-        // 已登录但访问登录页 → 跳转到首页
-        if (to.path === '/login') {
-            return '/login';
-        }
         return true;
     }
-    // 无token
+
     if (whiteList.includes(to.path)) {
         return true;
     }
+    
 
     return '/login';
 });

@@ -1,6 +1,6 @@
 ﻿import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import { getStore, setStore } from '@/utils/utils';
+import { getStore, removeStore, setStore } from '@/utils/utils';
 
 export const useUserStore = defineStore('user', () => {
     const token = ref(getStore('token'));
@@ -14,5 +14,12 @@ export const useUserStore = defineStore('user', () => {
         setStore('userInfo', info);
     };
 
-    return { token, setToken, userInfo, setUserInfo };
+    const resets = () => {
+        token.value = null
+        userInfo.value = null
+        removeStore('token')
+        removeStore('userInfo')
+    }
+
+    return { token, setToken, userInfo, setUserInfo,resets };
 });

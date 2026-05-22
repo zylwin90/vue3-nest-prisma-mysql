@@ -2,7 +2,7 @@
     <div class="box">
         <el-card>
             <p style="text-align: center; color: #000; font-weight: 700; padding: 10px 0">登录</p>
-            <el-form :model="form" :rules="rules" ref="formRef" label-width="auto">
+            <el-form :model="form" :rules="rules" ref="formRef" label-width="auto" @submit.prevent="login">
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model="form.email" placeholder="请输入" />
                 </el-form-item>
@@ -11,7 +11,7 @@
                 </el-form-item>
 
                 <el-form-item label=" ">
-                    <el-button type="primary" @click="login" :loading="loading">登录</el-button>
+                    <el-button type="primary" native-type="submit" :loading="loading">登录</el-button>
                 </el-form-item>
 
                 <div style="text-align: center">
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import type { FormInstance } from 'element-plus';
-import { reactive, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import api from '@/apis/login';
 import { errorTips, successTips } from '@/utils/utils';
 import { useRouter } from 'vue-router';
@@ -63,6 +63,10 @@ const login = async () => {
 const register = () => {
     router.push('/register');
 };
+
+onMounted(() => {
+    userStore.resets();
+});
 
 const rules = reactive({
     email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],

@@ -2,9 +2,9 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { Roles } from '@/decorators/roles.decorator';
-import { JwtAuthGuard } from '@/guards/passport-jwt-guard';
-import { Public } from '@/decorators/public.decorator';
+import { Roles } from '@/common/decorators/roles.decorator';
+import { JwtAuthGuard } from '@/common/guards/passport-jwt-guard';
+import { Public } from '@/common/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
