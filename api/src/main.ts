@@ -6,6 +6,7 @@ import { AllExceptionsFilter } from '@/common/filters/all-exception.filter';
 import { HttpExceptionsFilter } from '@/common/filters/http-exception.filter';
 import { RolesGuard } from '@/common/guards/auth.guard';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,6 +24,15 @@ async function bootstrap() {
   // 全局守卫 需手动传入 reflector （这种不推荐）
   // const reflector = app.get(Reflector);
   // app.useGlobalGuards(new RolesGuard(reflector));
+
+  // Swagger 配置
+  const config = new DocumentBuilder()
+    .setTitle('nestjs demo')
+    .setDescription('用户nestjs框架测试文档')
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(process.env.PORT ?? 3000);
 }
