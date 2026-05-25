@@ -13,7 +13,8 @@ async function bootstrap() {
   // 全局（验证参数）管道
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true,
+      transform: true, //自动将负载转换为根据其 DTO 类类型化的对象
+      disableErrorMessages: false, //禁用错误信息
     }),
   );
 

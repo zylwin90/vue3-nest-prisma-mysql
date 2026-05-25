@@ -27,6 +27,11 @@ const router = createRouter({
             name: 'detail',
             component: () => import('@/todo/detail.vue'),
         },
+        {
+            path: '/test',
+            name: 'test',
+            component: () => import('@/test/index.vue'),
+        },
     ],
 });
 
@@ -41,7 +46,6 @@ router.beforeEach((to: any, form: any) => {
     if (whiteList.includes(to.path)) {
         return true;
     }
-    
 
     return '/login';
 });
