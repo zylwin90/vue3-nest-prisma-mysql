@@ -56,6 +56,8 @@ const login = async () => {
             })
             .finally(() => {
                 loading.value = false;
+                console.log(1);
+                
             });
     } catch (error) {}
 };
