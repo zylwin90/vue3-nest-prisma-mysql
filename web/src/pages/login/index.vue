@@ -52,7 +52,7 @@ const login = async () => {
                 userStore.setToken(access_token);
                 userStore.setUserInfo(userInfo);
                 successTips('登录成功');
-                router.push('/todo');
+                router.push('/home');
             })
             .finally(() => {
                 loading.value = false;

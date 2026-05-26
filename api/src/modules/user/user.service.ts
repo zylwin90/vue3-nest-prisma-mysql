@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/modules/prisma/prisma.service';
-import { err, success } from '@/utils';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@/common/decorators/use.decorator';
+import { resultFail, resultSuccess } from '@/utils';
 @Injectable()
 export class UserService {
   constructor(
@@ -22,19 +22,18 @@ export class UserService {
     });
 
     // 没有这个用户
-    if (!user) return err('用户不存在');
+    if (!user) return resultFail('用户不存在');
 
     // 判断密码是否正确
-    if (userDto.password != user.password) return err('密码错误');
+    if (userDto.password != user.password) return resultFail('密码错误');
 
     // 生产token
     const payload = { username: user.name, sub: user.id };
     const token = this.jwt.sign(payload);
-    const data = {
+    return resultSuccess({
       access_token: token,
       userInfo: user,
-    };
-    return success(data);
+    });
   }
 
   /**
@@ -43,16 +42,16 @@ export class UserService {
    * @returns
    */
   async register(userDto: RegisterUserDto) {
-    const res = await this.prisma.user.create({
+    await this.prisma.user.create({
       data: userDto,
     });
-    return success(res);
+    return resultSuccess(null);
   }
 
   /**
    * 用户详情
    */
   getUserInfo(@User() user: any) {
-    return success(user);
+    return user;
   }
 }

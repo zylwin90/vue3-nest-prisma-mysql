@@ -1,8 +1,4 @@
-<template>
-    <div>控制反转和依赖注入</div>
-</template>
-
-<script setup lang="ts">
+export {};
 /**
  * 为了解决这个问题可以使用IOC容器
  * 其实就是写了一个中间件 ，来收集依赖，主要是为了解耦，减少维护成本
@@ -49,6 +45,3 @@ class B {
 }
 
 new B(mo);
-</script>
-
-<style scoped lang="scss"></style>

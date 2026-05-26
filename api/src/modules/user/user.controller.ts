@@ -6,7 +6,6 @@ import { Roles } from '@/common/decorators/roles.decorator';
 import { JwtAuthGuard } from '@/common/guards/passport-jwt-guard';
 import { Public } from '@/common/decorators/public.decorator';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { success } from '@/utils';
 import { TodoResponseDto } from './dto/test.dto';
 @ApiBearerAuth()
 @Controller('user')

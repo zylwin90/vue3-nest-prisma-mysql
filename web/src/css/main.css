@@ -1,8 +1,5 @@
-﻿* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+﻿
+@import 'tailwindcss';
 
 html,
 body,
@@ -10,6 +7,3 @@ body,
     height: 100%;
 }
 
-#app{
-    padding: 10px;
-}

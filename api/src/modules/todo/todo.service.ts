@@ -1,7 +1,7 @@
 import { PrismaService } from '@/modules/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { CreateTudoDto, DetailTudoDto, EditTudoDto, ListTudoDto } from './dto';
-import { success } from '@/utils';
+import { resultSuccess } from '@/utils';
 
 @Injectable()
 export class TodoService {
@@ -12,13 +12,13 @@ export class TodoService {
    * @returns
    */
   async add(addTudo: CreateTudoDto, userId) {
-    const res = await this.prisma.todo.create({
+    await this.prisma.todo.create({
       data: {
         ...addTudo,
         userId,
       },
     });
-    return success(res);
+    return resultSuccess(null);
   }
 
   /**
@@ -41,7 +41,7 @@ export class TodoService {
 
     // name 条件
     if (name) {
-      where.name = { contains: name, mode: 'insensitive' };
+      where.name = { contains: name };
     }
 
     // 查询数据
@@ -59,7 +59,7 @@ export class TodoService {
       where,
     });
 
-    return success({ list: data, total });
+    return resultSuccess({ list: data, total });
   }
 
   /**
@@ -69,7 +69,7 @@ export class TodoService {
    */
   async detail(id: DetailTudoDto) {
     const res = await this.prisma.todo.findUnique({ where: id });
-    return success(res);
+    return resultSuccess(res);
   }
 
   /**
@@ -78,11 +78,11 @@ export class TodoService {
    * @returns
    */
   async edit(data: EditTudoDto) {
-    const res = await this.prisma.todo.update({
+    await this.prisma.todo.update({
       data,
       where: { id: data.id },
     });
-    return success(res);
+    return resultSuccess(null);
   }
 
   /**
@@ -91,7 +91,7 @@ export class TodoService {
    * @returns
    */
   async del(id: DetailTudoDto) {
-    const res = await this.prisma.todo.delete({ where: id });
-    return success(res);
+    await this.prisma.todo.delete({ where: id });
+    return resultSuccess(null);
   }
 }

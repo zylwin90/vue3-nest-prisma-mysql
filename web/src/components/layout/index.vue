@@ -1,0 +1,24 @@
+﻿<template>
+    <el-container class="h-full">
+        <el-aside width="200px">
+            <Logo />
+            <Aside />
+        </el-aside>
+        <el-container>
+            <el-header>
+                <Header />
+            </el-header>
+            <el-main>
+                <router-view />
+            </el-main>
+        </el-container>
+    </el-container>
+</template>
+
+<script setup lang="ts">
+import Aside from './aside.vue';
+import Logo from './logo.vue';
+import Header from './header.vue';
+</script>
+
+<style scoped lang="scss"></style>

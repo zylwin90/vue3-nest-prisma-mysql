@@ -1,8 +1,5 @@
-<template>
-    <div></div>
-</template>
+export {};
 
-<script setup lang="ts">
 /**
  * 类装饰器
  * @param target
@@ -78,6 +75,3 @@ class Xiaoman1 {
 //         return this.name;
 //     }
 // }
-</script>
-
-<style scoped lang="scss"></style>

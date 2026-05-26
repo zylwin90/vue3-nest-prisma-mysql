@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 
-import { err } from '@/utils';
+import { resultFail } from '@/utils';
 
 // @Catch() 装饰器绑定所需的元数据到异常过滤器上。它告诉 Nest这个特定的过滤器正在寻找
 @Catch()
@@ -24,6 +24,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
     // 自定义异常返回体
-    response.status(statusCode).json(err(exception.message, null, statusCode));
+    response.status(statusCode).json(resultFail(exception.message, null, statusCode));
   }
 }

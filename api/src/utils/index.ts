@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 /**
  * @description: 成功统一返回体
  */
-export const success = <T = any>(
+export const resultSuccess = <T = any>(
   data?: T | null,
   msg: string = RESPONSE_MSG.SUCCESS,
   code: number = RESPONSE_CODE.SUCCESS,
@@ -18,13 +18,13 @@ export const success = <T = any>(
 /**
  * @description: 失败统一返回体
  */
-export const err = <T = any>(
+export const resultFail = <T = any>(
   msg: string = RESPONSE_MSG.FAILURE,
   data?: T | null,
   code: number = RESPONSE_CODE.NOSUCCESS,
 ): CommonType.Response<T | null> => ({
-  data: data ?? null,
   msg,
+  data: data ?? null,
   code,
   timestamp: dayjs().valueOf(),
 });
