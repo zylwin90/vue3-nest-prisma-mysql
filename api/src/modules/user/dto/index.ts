@@ -26,3 +26,16 @@ export class ListDto {
   @Min(1)
   pageSize?: number = 20;
 }
+
+/**
+ * 修改状态
+ */
+
+export class ChangeDto {
+  @Type(() => Number)
+  @IsNumber()
+  status: UserStaus;
+  @Type(() => Number)
+  @IsNumber()
+  id: number;
+}

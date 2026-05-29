@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { resultFail, resultSuccess } from '@/utils';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { UserLineStaus, UserStaus } from '@/enums/user';
 
 @Injectable()
 export class AuthService {
@@ -27,9 +28,20 @@ export class AuthService {
     // 判断密码是否正确
     if (userDto.password != user.password) return resultFail('密码错误');
 
+    // 如果被禁用，不能登录
+    if (user.status === UserStaus.Disable)
+      return resultFail('当前用户禁用，不能登录！');
+
+    // 设置用户在线状态
+    await this.prisma.user.update({
+      data: { line: UserLineStaus.Online },
+      where: { email: userDto.email },
+    });
+
     // 生产token
     const payload = { username: user.name, sub: user.id };
     const token = this.jwt.sign(payload);
+
     return resultSuccess({
       access_token: token,
       userInfo: user,

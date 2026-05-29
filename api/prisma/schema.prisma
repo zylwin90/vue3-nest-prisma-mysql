@@ -21,10 +21,10 @@ model User {
   password   String
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
-  roleId     Int      @unique @default(1)
-  roleName   String
-  status     Int
-  line       Int
+  roleId     Int      @default(1)
+  role       Role     @relation(fields: [roleId], references: [id])
+  status     Int      @default(1) //1正常 2 禁用
+  line       Int      @default(2) // 1在线 2 下线
   todos      Todo[]
 }
 
@@ -35,8 +35,9 @@ model Role {
   authList   Json
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
-  remark     String?
   status     Int
+  remark     String?
+  users      User[]
 }
 
 // todo

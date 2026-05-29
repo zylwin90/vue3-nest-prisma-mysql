@@ -1,6 +1,7 @@
 ﻿import { ref, h, createApp, withDirectives } from 'vue';
 import { ElDrawer, ElButton, ElConfigProvider } from 'element-plus';
-
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
 import { initRouter } from '@/router';
 import directives from '@/directives';
 import type { DrawerProps } from 'element-plus';
@@ -116,7 +117,7 @@ export const openDrawer = (
                                                       }
                                                   },
                                               },
-                                              () => dialogProps.submitName || '取消'
+                                              () => dialogProps.submitName || '确认'
                                           ),
                                 ]),
                         }
@@ -131,6 +132,7 @@ export const openDrawer = (
     const div = document.createElement('div');
     document.body.appendChild(div);
     app.mount(div);
+    app.use(ElementPlus)
     // 卸载
     function unmount() {
         open.value = false;

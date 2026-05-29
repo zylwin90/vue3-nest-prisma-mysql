@@ -17,10 +17,30 @@
             <el-table-column label="用户名称" prop="name"></el-table-column>
             <el-table-column label="邮箱" prop="email"></el-table-column>
             <el-table-column label="角色" prop="roleName"></el-table-column>
-            <el-table-column label="创建时间" prop="createTime"></el-table-column>
-            <el-table-column label="修改时间" prop="updateTime"></el-table-column>
-            <el-table-column label="在线状态" prop="line"></el-table-column>
-            <el-table-column label="状态" prop="status"></el-table-column>
+            <el-table-column label="创建时间" prop="createTime">
+                <template #="{ row }">
+                    <span>{{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="修改时间" prop="updateTime">
+                <template #="{ row }">
+                    <span>{{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="在线状态" prop="line">
+                <template #="{ row }">
+                    <span :class="row.line == UserLineStaus.Online ? 'text-emerald-600' : 'text-red-600'">
+                        {{ row.line == UserLineStaus.Online ? '在线' : '离线' }}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column label="用户状态" prop="status">
+                <template #="{ row }">
+                    <span :class="row.status == UserStaus.Normal ? 'text-emerald-600' : 'text-red-600'">
+                        {{ row.status == UserStaus.Normal ? '正常' : '禁用' }}
+                    </span>
+                </template>
+            </el-table-column>
             <el-table-column label="操作" prop="name">
                 <template #="{ row }">
                     <el-button type="danger" @click="opration('Del', row)" link>删除</el-button>
@@ -52,10 +72,10 @@ import BaseTable from '@/components/BaseTable.vue';
 import { usePage } from '@/hooks/usePage';
 import { onMounted, ref } from 'vue';
 import api from '@/apis/user';
-import { UserStaus } from '@/enum/user';
+import { UserLineStaus, UserStaus } from '@/enum/user';
 import { ElMessageBox } from 'element-plus';
 import { successTips } from '@/utils/utils';
-
+import dayjs from 'dayjs';
 const items = ref([
     {
         key: 'name',
@@ -119,6 +139,7 @@ const opration = (val: string, row: any) => {
                 type: 'warning',
             }).then(() => {
                 api.del(row.id).then(res => {
+                    if (!res || res.code != 1) return;
                     successTips('已删除');
                     getList();
                 });
@@ -131,6 +152,7 @@ const opration = (val: string, row: any) => {
                 type: 'warning',
             }).then(() => {
                 api.update({ id: row.id, status: UserStaus.Disable }).then(res => {
+                    if (!res || res.code != 1) return;
                     successTips('已禁用');
                     getList();
                 });
@@ -143,6 +165,7 @@ const opration = (val: string, row: any) => {
                 type: 'warning',
             }).then(() => {
                 api.update({ id: row.id, status: UserStaus.Normal }).then(res => {
+                    if (!res || res.code != 1) return;
                     successTips('已启用');
                     getList();
                 });

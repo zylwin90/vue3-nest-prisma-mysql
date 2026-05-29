@@ -3,6 +3,7 @@ import { ElDialog, ElButton } from 'element-plus';
 import { initRouter } from '@/router';
 import directives from '@/directives';
 import type { DialogProps } from 'element-plus';
+import ElementPlus from 'element-plus';
 
 /**
  *
@@ -113,7 +114,7 @@ export const openDialog = (component: any, props: any, dialogProps: MyDialogProp
     const div = document.createElement('div');
     document.body.appendChild(div);
     app.mount(div);
-
+    app.use(ElementPlus);
     // 卸载
     function unmount() {
         open.value = false;
