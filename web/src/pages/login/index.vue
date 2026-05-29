@@ -34,8 +34,8 @@ const userStore = useUserStore();
 
 const formRef = ref<FormInstance>();
 const form = reactive({
-    email: '',
-    password: '',
+    email: '990748875@qq.com',
+    password: '12345',
 });
 const loading = ref(false);
 
@@ -56,7 +56,6 @@ const login = async () => {
             })
             .finally(() => {
                 loading.value = false;
-                console.log(1);
                 
             });
     } catch (error) {}

@@ -1,0 +1,13 @@
+﻿
+@import 'tailwindcss';
+
+html,
+body,
+#app {
+    height: 100%;
+}
+
+/* 鼠标移动到 el-dropdown 去除黑色边框 */
+:focus-visible {
+    outline: none;
+}

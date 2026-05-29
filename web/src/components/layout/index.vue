@@ -8,8 +8,10 @@
             <el-header>
                 <Header />
             </el-header>
-            <el-main>
-                <router-view />
+            <el-main class="main">
+                <el-card class="h-full">
+                    <router-view />
+                </el-card>
             </el-main>
         </el-container>
     </el-container>
@@ -21,4 +23,9 @@ import Logo from './logo.vue';
 import Header from './header.vue';
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.main {
+    background-color: #f2f3f5;
+    padding: 10px;
+}
+</style>

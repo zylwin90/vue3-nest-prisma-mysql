@@ -1,67 +1,64 @@
 ﻿<template>
-    <el-card class="card">
-        <div class="box">
-            <el-form :model="form" label-width="auto" style="display: flex">
-                <el-form-item label="tuto名称" style="width: 300px">
-                    <el-input v-model="form.name" placeholder="请输入" />
-                </el-form-item>
-                <el-form-item label="状态" style="width: 300px">
-                    <el-select v-model="form.status" placeholder="请选择状态">
-                        <el-option :label="p.label" :value="p.value" v-for="(p, i) in statusList" />
-                    </el-select>
-                </el-form-item>
+    <div class="box">
+        <el-form :model="form" label-width="auto" style="display: flex">
+            <el-form-item label="tuto名称" style="width: 300px">
+                <el-input v-model="form.name" placeholder="请输入" />
+            </el-form-item>
+            <el-form-item label="状态" style="width: 300px">
+                <el-select v-model="form.status" placeholder="请选择状态">
+                    <el-option :label="p.label" :value="p.value" v-for="(p, i) in statusList" />
+                </el-select>
+            </el-form-item>
 
-                <el-button type="primary" style="margin-left: 20px" @click="getList">查询</el-button>
-                <el-button type="warning" style="margin-left: 20px" @click="addHandle">新增</el-button>
-                <el-button type="danger" style="margin-left: 20px" @click="goOut">退出登录</el-button>
-            </el-form>
+            <el-button type="primary" style="margin-left: 20px" @click="getList">查询</el-button>
+            <el-button type="warning" style="margin-left: 20px" @click="addHandle">新增</el-button>
+        </el-form>
 
-            <el-table class="table" :data="list" border style="width: 100%">
-                <el-table-column label="序号" width="70" fixed align="center">
-                    <template #="scope">
-                        {{ (currentPage - 1) * pageSize + (scope.$index + 1) }}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="name" label="todu名称" min-width="130" show-overflow-tooltip />
-                <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip />
-                <el-table-column prop="createTime" label="创建时间">
-                    <template #="{ row }">
-                        <span>{{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="updateTime" label="更新时间">
-                    <template #="{ row }">
-                        <span>{{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="状态" label="状态" fixed="right">
-                    <template #="{ row }">
-                        <span :style="{ color: row.status == 1 ? 'red' : 'green' }">
-                            {{ row.status == 1 ? '未完成' : '完成' }}
-                        </span>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="操作" label="操作" fixed="right">
-                    <template #="{ row }">
-                        <el-button link type="warning" @click="editHande(row)">编辑</el-button>
-                        <el-button link type="danger" @click="delHande(row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
+        <el-table class="table" :data="list" border style="width: 100%">
+            <el-table-column label="序号" width="70" fixed align="center">
+                <template #="scope">
+                    {{ (currentPage - 1) * pageSize + (scope.$index + 1) }}
+                </template>
+            </el-table-column>
+            <el-table-column prop="name" label="todu名称" min-width="130" show-overflow-tooltip />
+            <el-table-column prop="remark" label="备注" min-width="200" show-overflow-tooltip />
+            <el-table-column prop="createTime" label="创建时间">
+                <template #="{ row }">
+                    <span>{{ dayjs(row.createTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="updateTime" label="更新时间">
+                <template #="{ row }">
+                    <span>{{ dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="状态" label="状态" fixed="right">
+                <template #="{ row }">
+                    <span :style="{ color: row.status == 1 ? 'red' : 'green' }">
+                        {{ row.status == 1 ? '未完成' : '完成' }}
+                    </span>
+                </template>
+            </el-table-column>
+            <el-table-column prop="操作" label="操作" fixed="right">
+                <template #="{ row }">
+                    <el-button link type="warning" @click="editHande(row)">编辑</el-button>
+                    <el-button link type="danger" @click="delHande(row)">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
 
-            <el-row justify="end" style="margin-top: 20px">
-                <el-pagination
-                    v-model:current-page="currentPage"
-                    v-model:page-size="pageSize"
-                    layout="prev, pager, next, jumper"
-                    :total="total"
-                    background
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                />
-            </el-row>
-        </div>
-    </el-card>
+        <el-row justify="end" style="margin-top: 20px">
+            <el-pagination
+                v-model:current-page="currentPage"
+                v-model:page-size="pageSize"
+                layout="prev, pager, next, jumper"
+                :total="total"
+                background
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+            />
+        </el-row>
+    </div>
 
     <el-dialog v-model="dialogAdd" title="新增" width="500">
         <el-form :model="addFrom" :rules="rules" ref="formRef" label-width="auto">
@@ -235,12 +232,6 @@ const handleCurrentChange = (val: number) => {
     getList();
 };
 
-import { useUserStore } from '@/stores/user';
-const userStore = useUserStore();
-const goOut = () => {
-    userStore.resets();
-    router.push('/');
-};
 onMounted(() => {
     getList();
 });

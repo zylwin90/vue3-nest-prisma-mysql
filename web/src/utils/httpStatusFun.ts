@@ -1,5 +1,5 @@
 ﻿import { ElMessageBox } from 'element-plus';
-import router from '@/router';
+import { router } from '@/router';
 import { errorTips } from './utils';
 
 export const httpStatusFun = (status: number) => {

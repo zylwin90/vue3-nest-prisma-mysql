@@ -72,3 +72,32 @@ export const removeStore = (name: string) => {
     if (!name) return;
     window.sessionStorage.removeItem(name);
 };
+
+export const copy = (text: string) => {
+    if (!text) return;
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+
+    // 避免滚动到底部
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            successTips('复制成功');
+        } else {
+            errorTips('复制失败');
+        }
+    } catch (err) {
+        throw new Error('复制失败');
+    } finally {
+        document.body.removeChild(textArea);
+    }
+};
