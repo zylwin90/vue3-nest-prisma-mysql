@@ -1,57 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@/modules/prisma/prisma.service';
-import { LoginUserDto } from './dto/login-user.dto';
-import { RegisterUserDto } from './dto/register-user.dto';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@/common/decorators/use.decorator';
-import { resultFail, resultSuccess } from '@/utils';
+import { PrismaService } from '../prisma/prisma.service';
+import { ListDto } from './dto';
+import { UserStaus } from '@/enums/user';
+import { resultSuccess } from '@/utils';
+
 @Injectable()
 export class UserService {
-  constructor(
-    private prisma: PrismaService,
-    private jwt: JwtService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
+  async findAll(query: ListDto) {
+    const { status, name, currentPage = 1, pageSize = 20 } = query;
 
-  /**
-   * login
-   */
+    const skip = (currentPage - 1) * pageSize;
+    const where: any = {};
 
-  async login(userDto: LoginUserDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: userDto.email },
+    // 只有当 status 存在且不为 0 时才添加条件
+    if (status !== UserStaus.ALL) {
+      where.status = status;
+    }
+
+    // name 条件
+    if (name) {
+      where.name = { contains: name };
+    }
+
+    // 查询数据
+    const data = await this.prisma.user.findMany({
+      where,
+      skip: skip, // 跳过的记录数
+      take: pageSize, // 取多少条
+      orderBy: {
+        createTime: 'desc', // 排序
+      },
     });
 
-    // 没有这个用户
-    if (!user) return resultFail('用户不存在');
-
-    // 判断密码是否正确
-    if (userDto.password != user.password) return resultFail('密码错误');
-
-    // 生产token
-    const payload = { username: user.name, sub: user.id };
-    const token = this.jwt.sign(payload);
-    return resultSuccess({
-      access_token: token,
-      userInfo: user,
+    // 查询总记录数（用于计算总页数）
+    const total = await this.prisma.user.count({
+      where,
     });
+
+    return resultSuccess({ list: data, total });
   }
 
-  /**
-   * 注册
-   * @param userDto
-   * @returns
-   */
-  async register(userDto: RegisterUserDto) {
-    await this.prisma.user.create({
-      data: userDto,
-    });
-    return resultSuccess(null);
-  }
-
-  /**
-   * 用户详情
-   */
-  getUserInfo(@User() user: any) {
-    return user;
-  }
+ 
 }

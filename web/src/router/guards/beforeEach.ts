@@ -20,7 +20,7 @@ const NotFoundRoute = {
 let asyncRoutesLoaded = false;
 
 export function setupBeforeEachGuard(router: Router) {
-    router.beforeEach(async to => {
+    router.beforeEach(to => {
         const isStatic = isStaticRoute(to.path, staticRoutes);
 
         // 静态路由直接放行，例如 login、404、403 等
@@ -32,9 +32,6 @@ export function setupBeforeEachGuard(router: Router) {
         if (!isLogin()) {
             return {
                 path: '/login',
-                query: {
-                    redirect: to.fullPath,
-                },
                 replace: true,
             };
         }

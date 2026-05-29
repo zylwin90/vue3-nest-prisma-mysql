@@ -1,9 +1,7 @@
 ﻿import { http } from '@/utils/http';
 
 export default {
-    getList: (data: any) => http.get('/api/todo/getList', data),
-    add: (data: any) => http.post('/api/todo/add', data),
+    getList: (data: any) => http.get('/api/user/getList', data),
     del: (id: string) => http.delete(`/api/todo/del/${id}`),
-    put: (data: any) => http.put('/api/todo/edit', data),
-    detail: (id: string) => http.get(`/api/todo/detail/${id}`),
+    update: (data: any) => http.patch(`/api/todo/update`, data),
 };

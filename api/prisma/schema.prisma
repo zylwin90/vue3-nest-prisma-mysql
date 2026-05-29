@@ -21,7 +21,22 @@ model User {
   password   String
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
+  roleId     Int      @unique @default(1)
+  roleName   String
+  status     Int
+  line       Int
   todos      Todo[]
+}
+
+// role
+model Role {
+  id         Int      @id @default(autoincrement())
+  name       String
+  authList   Json
+  createTime DateTime @default(now())
+  updateTime DateTime @updatedAt
+  remark     String?
+  status     Int
 }
 
 // todo

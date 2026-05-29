@@ -5,12 +5,12 @@ import { TodoModule } from '@/modules/todo/todo.module';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { RolesGuard } from '@/common/guards/auth.guard';
 import { JwtAuthGuard } from '@/common/guards/passport-jwt-guard';
-import { TestModule } from './modules/test/test.module';
 import { SuccessInterceptor } from '@/common/interceptors/success.interceptor';
 import { LoggerMiddleware } from './common/middlewares/log';
 import { FunMiddleware } from './common/middlewares/fun';
+import { AuthModule } from '@/modules/auth/auth.module';
 @Module({
-  imports: [PrismaModule, UserModule, TodoModule, TestModule],
+  imports: [PrismaModule, UserModule, TodoModule, AuthModule],
   controllers: [],
   providers: [
     {

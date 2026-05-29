@@ -14,13 +14,34 @@
                     {{ (pageNum - 1) * pageSize + (scope.$index + 1) }}
                 </template>
             </el-table-column>
-            <el-table-column label="用户名称" prop="name" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="邮箱" prop="email" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="角色" prop="roleName" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="创建时间" prop="email" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="修改时间" prop="email" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="状态" prop="name" show-overflow-tooltip min-width="180"></el-table-column>
-            <el-table-column label="操作" prop="name" show-overflow-tooltip min-width="180"></el-table-column>
+            <el-table-column label="用户名称" prop="name"></el-table-column>
+            <el-table-column label="邮箱" prop="email"></el-table-column>
+            <el-table-column label="角色" prop="roleName"></el-table-column>
+            <el-table-column label="创建时间" prop="createTime"></el-table-column>
+            <el-table-column label="修改时间" prop="updateTime"></el-table-column>
+            <el-table-column label="在线状态" prop="line"></el-table-column>
+            <el-table-column label="状态" prop="status"></el-table-column>
+            <el-table-column label="操作" prop="name">
+                <template #="{ row }">
+                    <el-button type="danger" @click="opration('Del', row)" link>删除</el-button>
+                    <el-button
+                        type="warning"
+                        v-if="row.status == UserStaus.Normal"
+                        @click="opration('Disable', row)"
+                        link
+                    >
+                        禁用
+                    </el-button>
+                    <el-button
+                        type="primary"
+                        v-if="row.status == UserStaus.Disable"
+                        @click="opration('Normal', row)"
+                        link
+                    >
+                        启用
+                    </el-button>
+                </template>
+            </el-table-column>
         </BaseTable>
     </div>
 </template>
@@ -29,8 +50,11 @@
 import SearchBar from '@/components/SearchBar.vue';
 import BaseTable from '@/components/BaseTable.vue';
 import { usePage } from '@/hooks/usePage';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import api from '@/apis/user';
+import { UserStaus } from '@/enum/user';
+import { ElMessageBox } from 'element-plus';
+import { successTips } from '@/utils/utils';
 
 const items = ref([
     {
@@ -48,15 +72,15 @@ const items = ref([
         placeholder: '请选择状态',
         options: [
             {
-                value: 0,
+                value: UserStaus.ALL,
                 label: '全部',
             },
             {
-                value: 1,
+                value: UserStaus.Normal,
                 label: '正常',
             },
             {
-                value: 2,
+                value: UserStaus.Disable,
                 label: '禁用',
             },
         ],
@@ -64,7 +88,7 @@ const items = ref([
 ]);
 
 const form = ref({
-    status: 0,
+    status: UserStaus.ALL,
     name: '',
     email: '',
 });
@@ -78,20 +102,70 @@ const getList = async () => {
     const relsut = await api.getList(json);
     if (!relsut || relsut.code != 1) return;
 
-    const { data, count } = relsut.data;
+    const { list: l, count } = relsut.data;
 
-    list.value = data;
+    list.value = l;
     total.value = count;
 };
 
 const { total, pageNum, pageSize, pageNumChange, pageSizeChange } = usePage(getList);
 
+const opration = (val: string, row: any) => {
+    switch (val) {
+        case 'Del':
+            ElMessageBox.confirm('确定要删除当前用户？', '提示', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }).then(() => {
+                api.del(row.id).then(res => {
+                    successTips('已删除');
+                    getList();
+                });
+            });
+            break;
+        case 'Disable':
+            ElMessageBox.confirm('确定要禁用当前用户？', '提示', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }).then(() => {
+                api.update({ id: row.id, status: UserStaus.Disable }).then(res => {
+                    successTips('已禁用');
+                    getList();
+                });
+            });
+            break;
+        case 'Normal':
+            ElMessageBox.confirm('确定要启用当前用户？', '提示', {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }).then(() => {
+                api.update({ id: row.id, status: UserStaus.Normal }).then(res => {
+                    successTips('已启用');
+                    getList();
+                });
+            });
+            break;
+
+        default:
+            break;
+    }
+};
+
 const reset = () => {
-    form.value.status = 0;
+    form.value.status = UserStaus.ALL;
     form.value.name = '';
     form.value.email = '';
 };
-const search = () => {};
+const search = () => {
+    getList();
+};
+
+onMounted(() => {
+    getList();
+});
 </script>
 
 <style scoped lang="scss"></style>
